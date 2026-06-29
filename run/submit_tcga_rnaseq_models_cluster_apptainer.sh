@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Submit TCGA RNA-seq tumor-vs-rest models as a qsub array, each task running inside
-# Apptainer. Mirrors run/submit_gtex_models_cluster_apptainer.sh (simplified: one model
-# family, one data version, partition = TCGA tumor type).
+# Submit TCGA RNA-seq models as a qsub array, each task running inside Apptainer.
+# Mirrors run/submit_gtex_models_cluster_apptainer.sh (one model family per row,
+# partition = TCGA tumor type). tumor_vs_normal (TN*) models are only scheduled for
+# projects with matched normals (has_solid_tissue_normal=true in tumor_type_list.tsv).
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
@@ -30,33 +31,23 @@ APPTAINER_IMAGE="${APPTAINER_IMAGE:-}"
 APPTAINER_EXTRA_ARGS="${APPTAINER_EXTRA_ARGS:-}"
 APPTAINER_PYTHON_BIN="${APPTAINER_PYTHON_BIN:-python}"
 
-# Data inputs (required for full runs; not for --write_model_only).
 COUNTS_TSV="${TCGA_RNASEQ_COUNTS_TSV:-}"
 SAMPLE_METADATA_TSV="${TCGA_RNASEQ_SAMPLE_METADATA_TSV:-}"
 GTF="${TCGA_RNASEQ_GTF:-}"
 
-MODE="build"           # build | write_model_only
+MODE="build"
 FILTER_TUMOR_TYPE=""
 FILTER_MODELS=""
 OVERWRITE=""
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
   ./geneset-extractor-dev/run/submit_tcga_rnaseq_models_cluster_apptainer.sh --submit \
       [--write_model_only] [--tumor_type_id ID] [--model_id MODEL[,MODEL...]] [--overwrite]
-  ./geneset-extractor-dev/run/submit_tcga_rnaseq_models_cluster_apptainer.sh --help
-
-Required env:
-  APPTAINER_IMAGE
-  For full runs also: TCGA_RNASEQ_COUNTS_TSV, TCGA_RNASEQ_SAMPLE_METADATA_TSV, TCGA_RNASEQ_GTF
-Optional env:
-  REPO_ROOT, DIG_DIR, WORK_ROOT, TCGA_RNASEQ_OUT_ROOT, TCGA_RNASEQ_WORKLIST,
-  TCGA_RNASEQ_ARRAY_MEMORY, TCGA_RNASEQ_ARRAY_WALLTIME, QSUB_BIN
-
-One array task per (tumor_type x model). Metadata/provenance refresh and S3 publish use the
-shared scripts run/refresh_model_metadata_and_provenance.sh and run/publish_library_to_s3.sh.
-EOF
+Required env: APPTAINER_IMAGE; for full runs also TCGA_RNASEQ_COUNTS_TSV, TCGA_RNASEQ_SAMPLE_METADATA_TSV, TCGA_RNASEQ_GTF.
+One array task per (tumor_type x model). Refresh/publish use the shared run/ scripts.
+USAGE
 }
 
 require_file() { [[ -f "$1" ]] || { echo "Missing required file: $1" >&2; exit 1; }; }
@@ -70,30 +61,27 @@ write_worklist() {
     BEGIN {
       n_models = 0
       while ((getline line < model_list) > 0) {
-        if (++ml == 1) continue                       # header
+        if (++ml == 1) continue
         split(line, f, "\t")
-        if (tolower(f[3]) != "true") continue          # enabled column
-        models[++n_models] = f[1]
+        if (tolower(f[3]) != "true") continue
+        models[++n_models] = f[1]; fam[f[1]] = f[2]
       }
-      n_want = 0
       if (length(filter_models) > 0) { split(filter_models, w, ","); for (i in w) want[w[i]] = 1; n_want = 1 }
       task = 0
     }
-    NR == 1 { next }                                   # tumor_type_list header
+    NR == 1 { next }
     {
-      tt = $1; proj = $2; label = $3
+      tt = $1; proj = $2; label = $3; has_normal = tolower($4)
       if (length(filter_tt) > 0 && tt != filter_tt) next
       for (mi = 1; mi <= n_models; mi++) {
         m = models[mi]
         if (n_want && !(m in want)) continue
+        if (fam[m] == "tumor_vs_normal" && has_normal != "true") continue
         printf "%d\t%s\t%s\t%s\t%s\n", ++task, tt, proj, label, m
       }
     }
   ' "${TUMOR_TYPE_LIST}" > "${WORKLIST}"
-  if [[ "$(awk 'END { print NR }' "${WORKLIST}")" -le 0 ]]; then
-    echo "TCGA RNA-seq filters produced an empty worklist" >&2
-    exit 1
-  fi
+  [[ "$(awk 'END { print NR }' "${WORKLIST}")" -gt 0 ]] || { echo "Empty worklist" >&2; exit 1; }
 }
 
 apptainer_bind_csv() {
@@ -117,7 +105,8 @@ run_task() {
   local bind_csv; bind_csv="$(apptainer_bind_csv)"
   local inner
   if [[ "${MODE}" == "write_model_only" ]]; then
-    inner="'${APPTAINER_PYTHON_BIN}' '${REPO_ROOT}/geneset-extractor-dev/NCI_GDC_TCGA_RNAseq/src/run_tumor_vs_rest_model.py'"
+    case "${model}" in TN*) runner="run_tumor_vs_normal_model.py" ;; *) runner="run_tumor_vs_rest_model.py" ;; esac
+    inner="'${APPTAINER_PYTHON_BIN}' '${REPO_ROOT}/geneset-extractor-dev/NCI_GDC_TCGA_RNAseq/src/${runner}'"
     inner+=" --model_id '${model}' --tumor_type_id '${tt}' --tumor_type_label '${label}' --project_id '${proj}'"
     inner+=" --run_root '${OUT_ROOT}/genesets/${tt}/models' --dig_dir '${DIG_DIR}' --model_manifest '${MODEL_MANIFEST}' --write_model_only"
   else
@@ -159,7 +148,6 @@ do_submit() {
     "${SELF_PATH}" --run_task
 }
 
-# ---- arg parsing ----
 [[ $# -ge 1 ]] || { usage >&2; exit 1; }
 ACTION=""
 while [[ $# -gt 0 ]]; do
@@ -174,8 +162,6 @@ while [[ $# -gt 0 ]]; do
     *) echo "Unknown argument: $1" >&2; usage >&2; exit 1 ;;
   esac
 done
-
-# Allow env-passed task mode/overwrite (set by do_submit for array tasks).
 MODE="${TCGA_TASK_MODE:-${MODE}}"
 OVERWRITE="${TCGA_TASK_OVERWRITE:-${OVERWRITE}}"
 

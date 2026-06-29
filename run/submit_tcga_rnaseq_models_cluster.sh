@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Submit TCGA RNA-seq tumor-vs-rest models as a qsub array WITHOUT Apptainer (uses the
-# host Python with PYTHONPATH pointed at DIG). Mirrors run/submit_gtex_models_cluster.sh.
-# For containerized runs use submit_tcga_rnaseq_models_cluster_apptainer.sh instead.
+# Submit TCGA RNA-seq models as a qsub array WITHOUT Apptainer (host Python + PYTHONPATH
+# pointed at DIG). Mirrors run/submit_gtex_models_cluster.sh. tumor_vs_normal (TN*) models
+# are only scheduled for projects with matched normals (tumor_type_list has_solid_tissue_normal).
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
@@ -36,15 +36,13 @@ FILTER_MODELS=""
 OVERWRITE=""
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
   ./geneset-extractor-dev/run/submit_tcga_rnaseq_models_cluster.sh --submit \
       [--write_model_only] [--tumor_type_id ID] [--model_id MODEL[,MODEL...]] [--overwrite]
-  ./geneset-extractor-dev/run/submit_tcga_rnaseq_models_cluster.sh --help
-
 Required env for full runs: TCGA_RNASEQ_COUNTS_TSV, TCGA_RNASEQ_SAMPLE_METADATA_TSV, TCGA_RNASEQ_GTF
 One array task per (tumor_type x model). Refresh/publish use the shared run/ scripts.
-EOF
+USAGE
 }
 
 require_file() { [[ -f "$1" ]] || { echo "Missing required file: $1" >&2; exit 1; }; }
@@ -59,18 +57,19 @@ write_worklist() {
         if (++ml == 1) continue
         split(line, f, "\t")
         if (tolower(f[3]) != "true") continue
-        models[++n_models] = f[1]
+        models[++n_models] = f[1]; fam[f[1]] = f[2]
       }
       if (length(filter_models) > 0) { split(filter_models, w, ","); for (i in w) want[w[i]] = 1; n_want = 1 }
       task = 0
     }
     NR == 1 { next }
     {
-      tt = $1; proj = $2; label = $3
+      tt = $1; proj = $2; label = $3; has_normal = tolower($4)
       if (length(filter_tt) > 0 && tt != filter_tt) next
       for (mi = 1; mi <= n_models; mi++) {
         m = models[mi]
         if (n_want && !(m in want)) continue
+        if (fam[m] == "tumor_vs_normal" && has_normal != "true") continue
         printf "%d\t%s\t%s\t%s\t%s\n", ++task, tt, proj, label, m
       }
     }
@@ -88,7 +87,8 @@ run_task() {
   export PYTHONPATH="${DIG_DIR}/src"
   echo "[task ${task_id}] ${tt} / ${model}"
   if [[ "${MODE}" == "write_model_only" ]]; then
-    exec "${PYTHON_BIN}" "${REPO_ROOT}/geneset-extractor-dev/NCI_GDC_TCGA_RNAseq/src/run_tumor_vs_rest_model.py" \
+    case "${model}" in TN*) runner="run_tumor_vs_normal_model.py" ;; *) runner="run_tumor_vs_rest_model.py" ;; esac
+    exec "${PYTHON_BIN}" "${REPO_ROOT}/geneset-extractor-dev/NCI_GDC_TCGA_RNAseq/src/${runner}" \
       --model_id "${model}" --tumor_type_id "${tt}" --tumor_type_label "${label}" --project_id "${proj}" \
       --run_root "${OUT_ROOT}/genesets/${tt}/models" --dig_dir "${DIG_DIR}" --model_manifest "${MODEL_MANIFEST}" --write_model_only
   fi

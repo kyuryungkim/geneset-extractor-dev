@@ -1,2 +1,3 @@
 model_id	model_family	enabled	require_gtf
 TR1	tumor_vs_rest	true	true
+TN1	tumor_vs_normal	true	true

@@ -1,2 +1,3 @@
 model_id	description_template
 TR1	TCGA bulk RNA-seq tumor-type signature for {model.inputs.tumor_type_label} using model {model.model_id}: harmonizome differential expression of {model.inputs.tumor_type_label} primary tumors versus the pooled primary tumors of all other TCGA tumor types, with deterministic group-size balancing, protein-coding biotype filtering, and signed top-k ranked extraction.
+TN1	TCGA bulk RNA-seq tumor-vs-normal signature for {model.inputs.tumor_type_label} using model {model.model_id}: differential expression of {model.inputs.tumor_type_label} primary tumors versus matched solid tissue normal samples, with deterministic group-size balancing, protein-coding biotype filtering, and signed top-k ranked extraction.

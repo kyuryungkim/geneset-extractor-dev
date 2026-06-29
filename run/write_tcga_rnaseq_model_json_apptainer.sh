@@ -14,11 +14,11 @@ APPTAINER_EXTRA_ARGS="${APPTAINER_EXTRA_ARGS:-}"
 APPTAINER_PYTHON_BIN="${APPTAINER_PYTHON_BIN:-python}"
 
 usage() {
-  cat <<'EOF'
+  cat <<'USAGE'
 Usage:
-  ./geneset-extractor-dev/run/write_tcga_rnaseq_model_json_apptainer.sh --runner tumor_vs_rest [runner args...]
+  ./geneset-extractor-dev/run/write_tcga_rnaseq_model_json_apptainer.sh --runner tumor_vs_rest|tumor_vs_normal [runner args...]
   ./geneset-extractor-dev/run/write_tcga_rnaseq_model_json_apptainer.sh --help
-EOF
+USAGE
 }
 
 require_dir() { [[ -d "$1" ]] || { echo "Missing required directory: $1" >&2; exit 1; }; }
@@ -32,6 +32,7 @@ RUNNER_NAME=""
 if [[ "$1" == "--runner" ]]; then RUNNER_NAME="$2"; shift 2; else echo "Missing required --runner" >&2; exit 1; fi
 case "${RUNNER_NAME}" in
   tumor_vs_rest) RUNNER_REL="NCI_GDC_TCGA_RNAseq/src/run_tumor_vs_rest_model.py" ;;
+  tumor_vs_normal) RUNNER_REL="NCI_GDC_TCGA_RNAseq/src/run_tumor_vs_normal_model.py" ;;
   *) echo "Unsupported runner: ${RUNNER_NAME}" >&2; exit 1 ;;
 esac
 

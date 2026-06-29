@@ -2,10 +2,9 @@
 """Master loop for the NCI_GDC_TCGA_RNAseq library.
 
 Mirrors GTEx/src/build_genesets.py. For each selected tumor type x model, dispatch
-to run_tumor_vs_rest_model.py, which calls the DIG CLI
-(workflows rna_de_prepare --comparison_mode group_vs_rest) then
-(convert rna_deg_multi). geneset-extractor-dev stays a thin wrapper; DIG owns the
-workflow logic.
+to the family runner (run_tumor_vs_rest_model.py or run_tumor_vs_normal_model.py),
+which calls the DIG CLI (workflows rna_de_prepare) then (convert rna_deg_multi).
+geneset-extractor-dev stays a thin wrapper; DIG owns the workflow logic.
 """
 from __future__ import annotations
 
@@ -48,7 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--sample_metadata_tsv",
         required=True,
-        help="Sample metadata TSV with sample_id + project_id (group column) columns.",
+        help="Sample metadata TSV with sample_id + project_id (+ sample_type for tumor_vs_normal) columns.",
     )
     parser.add_argument("--gtf", help="GTF for biotype filtering (required if any model sets require_gtf).")
     parser.add_argument("--provenance_mirror_local_prefix")
@@ -108,11 +107,26 @@ def main() -> int:
     if not dig_dir.is_dir():
         raise SystemExit(f"Missing dig-gene-set-extractors directory: {dig_dir}")
 
-    # Only tumor_vs_rest is implemented for the first model.
     tumor_vs_rest_models = [m for m in selected_models if model_group_for(m) == "tumor_vs_rest"]
-    unsupported = [m for m in selected_models if model_group_for(m) != "tumor_vs_rest"]
-    if unsupported:
-        raise SystemExit(f"Models not implemented yet: {', '.join(unsupported)}")
+    tumor_vs_normal_models = [m for m in selected_models if model_group_for(m) == "tumor_vs_normal"]
+    runner_for = {
+        "tumor_vs_rest": "run_tumor_vs_rest_model.py",
+        "tumor_vs_normal": "run_tumor_vs_normal_model.py",
+    }
+
+    def has_solid_tissue_normal(row: dict[str, str]) -> bool:
+        return str(row.get("has_solid_tissue_normal", "")).strip().lower() in {"true", "1", "yes"}
+
+    def models_for_tumor_type(row: dict[str, str]) -> list[str]:
+        # tumor_vs_rest applies to all projects; tumor_vs_normal only where matched normals exist.
+        models = list(tumor_vs_rest_models)
+        if tumor_vs_normal_models:
+            if has_solid_tissue_normal(row):
+                models += tumor_vs_normal_models
+            else:
+                for m in tumor_vs_normal_models:
+                    print(f"  skip {row.get('tumor_type_id')}/{m}: project has no matched solid tissue normal", flush=True)
+        return models
 
     # gtf requirement check, library-wide (mirror GTEx).
     model_list_gtf_required = [str(r["model_id"]).strip() for r in model_rows if model_requires_gtf(r)]
@@ -128,14 +142,12 @@ def main() -> int:
     # Pre-flight conflict check.
     conflicts: list[str] = []
     for tumor_type_id in selected_tumor_types:
-        for model_id in tumor_vs_rest_models:
+        for model_id in models_for_tumor_type(tumor_by_id[tumor_type_id]):
             model_out = outputs_root / tumor_type_id / "models" / model_id
             if dir_nonempty(model_out):
                 conflicts.append(str(model_out))
     if conflicts and not args.overwrite:
-        raise SystemExit(
-            "Output already exists (re-run with --overwrite):\n" + "\n".join(conflicts)
-        )
+        raise SystemExit("Output already exists (re-run with --overwrite):\n" + "\n".join(conflicts))
 
     for tumor_type_id in selected_tumor_types:
         tumor_row = tumor_by_id[tumor_type_id]
@@ -144,20 +156,20 @@ def main() -> int:
         if not project_id or not tumor_type_label:
             raise SystemExit(f"Missing project_id/tumor_type_label for {tumor_type_id}")
         models_root = outputs_root / tumor_type_id / "models"
-        for model_id in tumor_vs_rest_models:
+        for model_id in models_for_tumor_type(tumor_row):
             if args.overwrite:
                 overwrite_dir(models_root / model_id)
             needs_gtf = model_requires_gtf(model_by_id[model_id])
+            family = model_group_for(model_id)
             cmd = [
                 str(Path(args.python_bin).resolve()),
-                str(src_root / "run_tumor_vs_rest_model.py"),
+                str(src_root / runner_for[family]),
                 "--model_id", model_id,
                 "--tumor_type_id", tumor_type_id,
                 "--tumor_type_label", tumor_type_label,
                 "--project_id", project_id,
                 "--counts_tsv", str(counts_tsv),
                 "--sample_metadata_tsv", str(sample_metadata_tsv),
-                "--group_column", "project_id",
                 "--run_root", str(models_root),
                 "--python_bin", str(Path(args.python_bin).resolve()),
                 "--dig_dir", str(dig_dir),
