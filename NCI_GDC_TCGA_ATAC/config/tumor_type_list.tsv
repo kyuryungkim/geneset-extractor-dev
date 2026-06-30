@@ -1,0 +1,24 @@
+tumor_type_id	project_id	tumor_type_label
+tcga_acc	TCGA-ACC	Adrenocortical Carcinoma
+tcga_blca	TCGA-BLCA	Bladder Urothelial Carcinoma
+tcga_brca	TCGA-BRCA	Breast Invasive Carcinoma
+tcga_cesc	TCGA-CESC	Cervical Squamous Cell Carcinoma and Endocervical Adenocarcinoma
+tcga_chol	TCGA-CHOL	Cholangiocarcinoma
+tcga_coad	TCGA-COAD	Colon Adenocarcinoma
+tcga_esca	TCGA-ESCA	Esophageal Carcinoma
+tcga_gbm	TCGA-GBM	Glioblastoma Multiforme
+tcga_hnsc	TCGA-HNSC	Head and Neck Squamous Cell Carcinoma
+tcga_kirc	TCGA-KIRC	Kidney Renal Clear Cell Carcinoma
+tcga_kirp	TCGA-KIRP	Kidney Renal Papillary Cell Carcinoma
+tcga_lgg	TCGA-LGG	Brain Lower Grade Glioma
+tcga_lihc	TCGA-LIHC	Liver Hepatocellular Carcinoma
+tcga_luad	TCGA-LUAD	Lung Adenocarcinoma
+tcga_lusc	TCGA-LUSC	Lung Squamous Cell Carcinoma
+tcga_meso	TCGA-MESO	Mesothelioma
+tcga_pcpg	TCGA-PCPG	Pheochromocytoma and Paraganglioma
+tcga_prad	TCGA-PRAD	Prostate Adenocarcinoma
+tcga_skcm	TCGA-SKCM	Skin Cutaneous Melanoma
+tcga_stad	TCGA-STAD	Stomach Adenocarcinoma
+tcga_tgct	TCGA-TGCT	Testicular Germ Cell Tumors
+tcga_thca	TCGA-THCA	Thyroid Carcinoma
+tcga_ucec	TCGA-UCEC	Uterine Corpus Endometrial Carcinoma

@@ -1,0 +1,2 @@
+model_id	family	contrast_metric	peak_weight_transform	normalize	link_method	program_preset	select	top_k	gmt_min_genes	gmt_max_genes	gmt_biotype_allowlist	genome_build
+AC1	anchor	log2fc	positive	within_set_l1	nearest_tss	connectable	top_k	200	10	500	protein_coding	hg19

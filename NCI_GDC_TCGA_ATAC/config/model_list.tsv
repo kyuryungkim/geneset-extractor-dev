@@ -1,0 +1,2 @@
+model_id	model_family	enabled	require_gtf
+AC1	atac_accessibility	true	true

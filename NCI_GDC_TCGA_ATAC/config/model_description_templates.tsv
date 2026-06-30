@@ -1,0 +1,2 @@
+model_id	description_template
+AC1	TCGA ATAC-seq chromatin-accessibility gene set for {model.inputs.tumor_type_label} using model {model.model_id}: genes linked (nearest-TSS) to peaks differentially accessible in {model.inputs.tumor_type_label} versus the pooled rest of the TCGA ATAC cohort (Corces 2018, hg19), split into OPEN/CLOSE direction sets with protein-coding biotype filtering.
