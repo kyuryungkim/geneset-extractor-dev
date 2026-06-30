@@ -1,0 +1,2 @@
+model_id	description_template
+SP1	TCGA SpliceSeq tumor-vs-normal alternative-splicing gene set for {model.inputs.tumor_type_label} using model {model.model_id}: genes whose splicing events (PSI) differ between {model.inputs.tumor_type_label} primary tumors and matched solid tissue normals (Welch test), split into __pos (increased inclusion in tumor) / __neg (decreased inclusion) sets.

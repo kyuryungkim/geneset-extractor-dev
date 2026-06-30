@@ -42,6 +42,10 @@
 !NCI_GDC_TCGA_ATAC/config/tumor_type_list.tsv
 !NCI_GDC_TCGA_ATAC/config/model_manifest.tsv
 !NCI_GDC_TCGA_ATAC/config/model_description_templates.tsv
+!NCI_GDC_TCGA_Splice/config/model_list.tsv
+!NCI_GDC_TCGA_Splice/config/tumor_type_list.tsv
+!NCI_GDC_TCGA_Splice/config/model_manifest.tsv
+!NCI_GDC_TCGA_Splice/config/model_description_templates.tsv
 
 # Allow traversing these subdirectories
 !LINCS_L1000/
@@ -58,6 +62,7 @@
 !NCI_GDC_TCGA_CNV/
 !NCI_GDC_TCGA_Methylation/
 !NCI_GDC_TCGA_ATAC/
+!NCI_GDC_TCGA_Splice/
 !src/
 !run/
 !proposals/
@@ -77,6 +82,7 @@
 !NCI_GDC_TCGA_CNV/**/
 !NCI_GDC_TCGA_Methylation/**/
 !NCI_GDC_TCGA_ATAC/**/
+!NCI_GDC_TCGA_Splice/**/
 !src/**/
 !run/**/
 !proposals/**/
@@ -142,6 +148,13 @@
 !NCI_GDC_TCGA_ATAC/**/*.md
 !NCI_GDC_TCGA_ATAC/**/*.pdf
 !NCI_GDC_TCGA_ATAC/**/*.png
+!NCI_GDC_TCGA_Splice/**/*.py
+!NCI_GDC_TCGA_Splice/**/*.r
+!NCI_GDC_TCGA_Splice/**/*.R
+!NCI_GDC_TCGA_Splice/**/*.sh
+!NCI_GDC_TCGA_Splice/**/*.md
+!NCI_GDC_TCGA_Splice/**/*.pdf
+!NCI_GDC_TCGA_Splice/**/*.png
 
 archive/
 

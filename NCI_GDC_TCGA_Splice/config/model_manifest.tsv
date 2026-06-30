@@ -1,0 +1,2 @@
+model_id	family	tool_family	study_contrast	condition_a	condition_b	effect_metric	select	top_k	gmt_min_genes	gmt_max_genes	gmt_split_signed
+SP1	anchor	tcga_spliceseq	condition_a_vs_b	tumor	adjacent_normal	welch_t	top_k	200	10	500	true

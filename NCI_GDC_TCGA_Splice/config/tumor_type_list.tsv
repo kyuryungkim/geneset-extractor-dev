@@ -1,0 +1,34 @@
+tumor_type_id	project_id	tumor_type_label	has_solid_tissue_normal	n_solid_tissue_normal
+tcga_acc	TCGA-ACC	Adrenocortical Carcinoma	false	5
+tcga_blca	TCGA-BLCA	Bladder Urothelial Carcinoma	true	37
+tcga_brca	TCGA-BRCA	Breast Invasive Carcinoma	true	162
+tcga_cesc	TCGA-CESC	Cervical Squamous Cell Carcinoma and Endocervical Adenocarcinoma	false	8
+tcga_chol	TCGA-CHOL	Cholangiocarcinoma	true	20
+tcga_coad	TCGA-COAD	Colon Adenocarcinoma	true	93
+tcga_dlbc	TCGA-DLBC	Lymphoid Neoplasm Diffuse Large B-cell Lymphoma	false	0
+tcga_esca	TCGA-ESCA	Esophageal Carcinoma	true	65
+tcga_gbm	TCGA-GBM	Glioblastoma Multiforme	true	30
+tcga_hnsc	TCGA-HNSC	Head and Neck Squamous Cell Carcinoma	true	82
+tcga_kich	TCGA-KICH	Kidney Chromophobe	true	66
+tcga_kirc	TCGA-KIRC	Kidney Renal Clear Cell Carcinoma	true	442
+tcga_kirp	TCGA-KIRP	Kidney Renal Papillary Cell Carcinoma	true	88
+tcga_laml	TCGA-LAML	Acute Myeloid Leukemia	false	0
+tcga_lgg	TCGA-LGG	Brain Lower Grade Glioma	false	0
+tcga_lihc	TCGA-LIHC	Liver Hepatocellular Carcinoma	true	89
+tcga_luad	TCGA-LUAD	Lung Adenocarcinoma	true	274
+tcga_lusc	TCGA-LUSC	Lung Squamous Cell Carcinoma	true	254
+tcga_meso	TCGA-MESO	Mesothelioma	false	1
+tcga_ov	TCGA-OV	Ovarian Serous Cystadenocarcinoma	true	135
+tcga_paad	TCGA-PAAD	Pancreatic Adenocarcinoma	true	42
+tcga_pcpg	TCGA-PCPG	Pheochromocytoma and Paraganglioma	false	5
+tcga_prad	TCGA-PRAD	Prostate Adenocarcinoma	true	118
+tcga_read	TCGA-READ	Rectum Adenocarcinoma	true	19
+tcga_sarc	TCGA-SARC	Sarcoma	true	24
+tcga_skcm	TCGA-SKCM	Skin Cutaneous Melanoma	false	3
+tcga_stad	TCGA-STAD	Stomach Adenocarcinoma	true	101
+tcga_tgct	TCGA-TGCT	Testicular Germ Cell Tumors	false	0
+tcga_thca	TCGA-THCA	Thyroid Carcinoma	true	100
+tcga_thym	TCGA-THYM	Thymoma	true	13
+tcga_ucec	TCGA-UCEC	Uterine Corpus Endometrial Carcinoma	true	52
+tcga_ucs	TCGA-UCS	Uterine Carcinosarcoma	false	6
+tcga_uvm	TCGA-UVM	Uveal Melanoma	false	0
