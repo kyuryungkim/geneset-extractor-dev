@@ -1,0 +1,2 @@
+model_id	description_template
+MD1	TCGA DNA methylation (450K) tumor-vs-normal gene set for {model.inputs.tumor_type_label} using model {model.model_id}: genes linked to CpG sites differentially methylated between {model.inputs.tumor_type_label} primary tumors and matched solid tissue normals (activity-oriented; hypomethylation->pos, hypermethylation->neg), with promoter-overlap CpG-to-gene linking and protein-coding biotype filtering.

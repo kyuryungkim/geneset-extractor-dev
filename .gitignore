@@ -34,6 +34,10 @@
 !NCI_GDC_TCGA_CNV/config/tumor_type_list.tsv
 !NCI_GDC_TCGA_CNV/config/model_manifest.tsv
 !NCI_GDC_TCGA_CNV/config/model_description_templates.tsv
+!NCI_GDC_TCGA_Methylation/config/model_list.tsv
+!NCI_GDC_TCGA_Methylation/config/tumor_type_list.tsv
+!NCI_GDC_TCGA_Methylation/config/model_manifest.tsv
+!NCI_GDC_TCGA_Methylation/config/model_description_templates.tsv
 
 # Allow traversing these subdirectories
 !LINCS_L1000/
@@ -48,6 +52,7 @@
 !KOMP2/
 !NCI_GDC_TCGA_RNAseq/
 !NCI_GDC_TCGA_CNV/
+!NCI_GDC_TCGA_Methylation/
 !src/
 !run/
 !proposals/
@@ -65,6 +70,7 @@
 !KOMP2/**/
 !NCI_GDC_TCGA_RNAseq/**/
 !NCI_GDC_TCGA_CNV/**/
+!NCI_GDC_TCGA_Methylation/**/
 !src/**/
 !run/**/
 !proposals/**/
@@ -116,6 +122,13 @@
 !NCI_GDC_TCGA_CNV/**/*.md
 !NCI_GDC_TCGA_CNV/**/*.pdf
 !NCI_GDC_TCGA_CNV/**/*.png
+!NCI_GDC_TCGA_Methylation/**/*.py
+!NCI_GDC_TCGA_Methylation/**/*.r
+!NCI_GDC_TCGA_Methylation/**/*.R
+!NCI_GDC_TCGA_Methylation/**/*.sh
+!NCI_GDC_TCGA_Methylation/**/*.md
+!NCI_GDC_TCGA_Methylation/**/*.pdf
+!NCI_GDC_TCGA_Methylation/**/*.png
 
 archive/
 

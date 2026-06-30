@@ -1,0 +1,2 @@
+model_id	family	array_type	score_mode	delta_orientation	program_preset	link_method	select	top_k	gmt_min_genes	gmt_max_genes	gmt_biotype_allowlist
+MD1	anchor	450k	delta_times_neglog10p	activity_oriented	connectable	promoter_overlap	top_k	200	10	500	protein_coding
