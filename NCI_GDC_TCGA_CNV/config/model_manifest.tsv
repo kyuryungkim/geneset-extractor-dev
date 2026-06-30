@@ -1,0 +1,2 @@
+model_id	family	segments_format	program_preset	min_abs_amplitude	select	top_k	emit_cohort_sets	cohort_score_threshold	cohort_min_fraction	cohort_min_samples	gmt_min_genes	gmt_max_genes	gmt_biotype_allowlist
+CR1	anchor	gdc_seg	default	0.10	top_k	200	true	0.15	0.05	5	10	500	protein_coding

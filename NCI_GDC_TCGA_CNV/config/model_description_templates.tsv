@@ -1,0 +1,2 @@
+model_id	description_template
+CR1	TCGA copy-number recurrence gene set for {model.inputs.tumor_type_label} using model {model.model_id}: recurrently amplified and deleted genes derived from masked copy-number segments across the {model.inputs.tumor_type_label} cohort, with focal-length weighting and protein-coding biotype filtering.

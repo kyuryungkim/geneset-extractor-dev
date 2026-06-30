@@ -30,6 +30,10 @@
 !NCI_GDC_TCGA_RNAseq/config/tumor_type_list.tsv
 !NCI_GDC_TCGA_RNAseq/config/model_manifest.tsv
 !NCI_GDC_TCGA_RNAseq/config/model_description_templates.tsv
+!NCI_GDC_TCGA_CNV/config/model_list.tsv
+!NCI_GDC_TCGA_CNV/config/tumor_type_list.tsv
+!NCI_GDC_TCGA_CNV/config/model_manifest.tsv
+!NCI_GDC_TCGA_CNV/config/model_description_templates.tsv
 
 # Allow traversing these subdirectories
 !LINCS_L1000/
@@ -43,6 +47,7 @@
 !MoTrPAC/
 !KOMP2/
 !NCI_GDC_TCGA_RNAseq/
+!NCI_GDC_TCGA_CNV/
 !src/
 !run/
 !proposals/
@@ -59,6 +64,7 @@
 !MoTrPAC/**/
 !KOMP2/**/
 !NCI_GDC_TCGA_RNAseq/**/
+!NCI_GDC_TCGA_CNV/**/
 !src/**/
 !run/**/
 !proposals/**/
@@ -78,16 +84,10 @@
 !run/**/*.md
 
 !proposals/**/*.py
-!proposals/**/*.r
-!proposals/**/*.R
 !proposals/**/*.sh
 !proposals/**/*.md
-
 !docs/**/*.md
 
-!LINCS_L1000/**/*.py
-!LINCS_L1000/**/*.sh
-!LINCS_L1000/**/*.md
 !GTEx/**/*.py
 !GTEx/**/*.sh
 !GTEx/**/*.md
@@ -99,6 +99,9 @@
 !MoTrPAC/**/*.py
 !MoTrPAC/**/*.sh
 !MoTrPAC/**/*.md
+!LINCS_L1000/**/*.py
+!LINCS_L1000/**/*.sh
+!LINCS_L1000/**/*.md
 !NCI_GDC_TCGA_RNAseq/**/*.py
 !NCI_GDC_TCGA_RNAseq/**/*.r
 !NCI_GDC_TCGA_RNAseq/**/*.R
@@ -106,6 +109,13 @@
 !NCI_GDC_TCGA_RNAseq/**/*.md
 !NCI_GDC_TCGA_RNAseq/**/*.pdf
 !NCI_GDC_TCGA_RNAseq/**/*.png
+!NCI_GDC_TCGA_CNV/**/*.py
+!NCI_GDC_TCGA_CNV/**/*.r
+!NCI_GDC_TCGA_CNV/**/*.R
+!NCI_GDC_TCGA_CNV/**/*.sh
+!NCI_GDC_TCGA_CNV/**/*.md
+!NCI_GDC_TCGA_CNV/**/*.pdf
+!NCI_GDC_TCGA_CNV/**/*.png
 
 archive/
 
